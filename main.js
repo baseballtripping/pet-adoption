@@ -22,9 +22,14 @@ async function petsArea() {
   petsData.forEach((pet) => {
     const clone = template.content.cloneNode(true);
 
+    clone.querySelector(".pet-card").dataset.species = pet.species;
+
     clone.querySelector("h3").textContent = pet.name;
     clone.querySelector(".pet-age").textContent = petAge(pet.birthYear);
     clone.querySelector(".pet-description").textContent = pet.description;
+
+    if (!pet.photo) pet.photo = "images/fallback.jpg";
+
     clone.querySelector(".pet-card-photo img").src = pet.photo;
     wrapper.appendChild(clone);
   });
@@ -41,4 +46,31 @@ function petAge(age) {
   if (ages == 0) return "Less than a year old";
 
   return `${ages} years old`;
+}
+
+// pet filter code
+
+const allButtons = document.querySelectorAll(".pet-filter button");
+
+allButtons.forEach((el) => {
+  el.addEventListener("click", handleButtonClick);
+});
+
+function handleButtonClick(e) {
+  // remove active class from any and all buttons
+  allButtons.forEach((el) => el.classList.remove("active"));
+
+  // add active classic to button that got clicked
+  e.target.classList.add("active");
+
+  // actualy filter the pets
+  const currentFilter = e.target.dataset.filter;
+
+  document.querySelectorAll(".pet-card").forEach((el) => {
+    if (currentFilter == el.dataset.species || currentFilter == "all") {
+      el.style.display = "grid";
+    } else {
+      el.style.display = "none";
+    }
+  });
 }
